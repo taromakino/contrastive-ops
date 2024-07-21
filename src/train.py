@@ -1,5 +1,6 @@
 from pprint import pprint
 
+import os
 import torch
 import torch.nn as nn
 import lightning as L
@@ -17,7 +18,7 @@ from embed import embed
 from argparse import ArgumentParser
 
 parser = ArgumentParser()
-parser.add_argument("--model_name", type=str, default="ctvae")
+parser.add_argument("--model_name", type=str, default="vae")
 parser.add_argument("--optimizer", type=str, default="Adam")
 parser.add_argument("--lr", type=float, default=1e-3)
 parser.add_argument("--step_size", type=int, default=4500)
@@ -51,18 +52,18 @@ parser.add_argument("--module", type=str, default='contrastive')
 parser.add_argument("--project", type=str, default="ops-training")
 parser.add_argument("-l", "--log_model", type=str, default='all')
 parser.add_argument("--subname", type=str, default="")
-parser.add_argument("--save_dir", type=str, default="/home/wangz222/scratch/")
 
-parser.add_argument("--dataset_path_ntc", type=str, default='/projects/site/gred/resbioai/comp_vision/cellpaint-ai/ops/datasets/funk22/funk22_lmdb_shuffled/ntc') # Will be derived from root
-parser.add_argument("--dataset_path_perturbed", type=str, default='/projects/site/gred/resbioai/comp_vision/cellpaint-ai/ops/datasets/funk22/funk22_lmdb_shuffled/perturbed') # Will be derived from root
+parser.add_argument("--dataset_path", type=str, required=True)
+parser.add_argument("--save_dir", type=str, required=True)
+parser.add_argument("--save_data_dir", type=str, required=True)
+
 parser.add_argument("--plate_list", type=str, nargs='+', default=['20200202_6W-LaC024A', '20200202_6W-LaC024D', '20200202_6W-LaC024E', '20200202_6W-LaC024F', '20200206_6W-LaC025A', '20200206_6W-LaC025B'])
 parser.add_argument("--test_ratio", type=float, nargs='+', default=[0.83,0.02,0.15])
-parser.add_argument("--save_data_dir", type=str, default="/home/wangz222/scratch/splits_shuffled")
 parser.add_argument("--batch_size", type=int, default=1024)
 parser.add_argument("--num_workers", type=int, default=8)
 parser.add_argument("--batch_correction", action='store_true')
 parser.add_argument("--label", type=str, nargs='*', default=[Column.gene.value, Column.batch.value])
-parser.add_argument("--stat_path", type=str, default="/home/wangz222/data/per_well_robust_stat.pkl")
+parser.add_argument("--stat_path", type=str)
 
 parser.add_argument("--max_epochs", type=int, default=2)
 parser.add_argument("--gradient_clip_val", type=float, default=0.5)
@@ -116,7 +117,10 @@ logger_p = {
                 "save_dir": args.save_dir,
                 }
 data_param = {
-                "dataset_path": {'ntc': args.dataset_path_ntc, 'perturbed': args.dataset_path_perturbed},
+                "dataset_path": {
+                    'ntc': os.path.join(args.dataset_path, "ntc"),
+                    'perturbed': os.path.join(args.dataset_path, "perturbed")
+                },
                 "plate_list": args.plate_list,
                 "test_ratio": args.test_ratio,
                 "save_dir": args.save_data_dir,
@@ -191,14 +195,13 @@ def train():
     example_img = get_images(8, dm.val_dataloader(), data_param['transform'])
 
     # wandb login
-    wandb.login(host='https://genentech.wandb.io')
+    wandb.login(host='https://genentech.wandb.io', key=os.environ['WANDB_API_KEY'])
 
     # initialise the wandb logger and name your wandb project
     wandb_logger = WandbLogger(**logger_p)
 
     # add your data parameters to the wandb config
     wandb_logger.experiment.config.update(data_param)
-    wandb_logger.experiment.log_code(root='/home/wangz222/contrastive-ops/src')
 
     # define model
     model = ModelClass(**model_param)
