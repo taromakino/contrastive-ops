@@ -37,7 +37,7 @@ class ImagePredictionLogger(Callback):
             reconst_imgs = torch.cat(list(reconst_imgs.values()), dim=0) if type(reconst_imgs) is dict else reconst_imgs
             val_imgs = torch.cat(list(val_imgs.values()), dim=0) if type(val_imgs) is dict else val_imgs
             imgs = torch.stack([val_imgs, reconst_imgs], dim=1).flatten(0, 1)
-            grid = torchvision.utils.make_grid(imgs, nrow=8, normalize=True, range=(-1, 1))
+            grid = torchvision.utils.make_grid(imgs, nrow=8, normalize=True, value_range=(-1, 1))
             trainer.logger.experiment.log({"Reconstructions":
                                            wandb.Image(grid, caption="Left: Input, Right: Output"),
                                            "global_steps": trainer.global_step})
