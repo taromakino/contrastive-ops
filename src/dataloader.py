@@ -41,7 +41,8 @@ class BaseDataModule(L.LightningDataModule):
         self.datamodule = {'label':OPSwithlabel, 'nolabel':OPSdataset}
         self.data_param = {'dataset_path':dataset_path, 'plate_list':plate_list, 'stat_path':stat_path, 
                       'batch_correction':batch_correction, 'preprocess':Preprocess()}
-        
+
+        self.prepare_data()
         # filter data and read in entire dataframe
         if not label:
             print('no label provided')
@@ -59,6 +60,7 @@ class BaseDataModule(L.LightningDataModule):
 
     def prepare_data(self):
         save_dir = self.save_dir
+        os.makedirs(save_dir, exist_ok=True)
         # train/val/test split
         if not os.path.exists(os.path.join(save_dir, 'perturbed_filtered.pkl')):
             metadata_df = self.get_filtered_df(self.data_param['dataset_path'], 

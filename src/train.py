@@ -190,12 +190,11 @@ def train():
     print('datamodule defined')
 
     # get example images to assess reconstruction quality
-    dm.prepare_data()
     dm.setup(stage='fit')
     example_img = get_images(8, dm.val_dataloader(), data_param['transform'])
 
     # wandb login
-    wandb.login(host='https://genentech.wandb.io', key=os.environ['WANDB_API_KEY'])
+    wandb.login(key=os.environ['WANDB_KEY'], host='https://genentech.wandb.io')
 
     # initialise the wandb logger and name your wandb project
     wandb_logger = WandbLogger(**logger_p)
