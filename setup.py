@@ -1,7 +1,15 @@
 from setuptools import setup, find_packages
 
 setup(
-    name="ops",
-    version="0.1",
+    name="contrastive-ops",
     packages=find_packages(),
+    install_requires=[
+        'lightning',
+        'lmdb',
+        'matplotlib',
+        'pandas',
+        'scikit-learn',
+        'torch',
+        'torchvision'
+    ]
 )

@@ -10,9 +10,9 @@ import kornia.augmentation as K
 import wandb
 
 from src.constants import Column
-from src.transformation import ArcsinhTransform, MinMaxNorm
+from src.transformation import ArcsinhTransform
 from src.callbacks import ImagePredictionLogger
-from src.helper import get_images, set_seed, get_module
+from src.helper import get_images, get_module
 from embed import embed
 
 from argparse import ArgumentParser
