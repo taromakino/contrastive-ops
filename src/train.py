@@ -47,7 +47,7 @@ parser.add_argument("--reg_type", type=str, default=None)
 parser.add_argument("--klscheduler", type=str, default='cyclic')
 parser.add_argument("--total_steps", type=int, default=3000)
 parser.add_argument("--latent_dim", type=int, default=64)
-parser.add_argument("--module", type=str, default='contrastive')
+parser.add_argument("--module", type=str, default='base')
 
 parser.add_argument("--project", type=str, default="ops-training")
 parser.add_argument("-l", "--log_model", type=str, default='all')

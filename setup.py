@@ -4,12 +4,14 @@ setup(
     name="contrastive-ops",
     packages=find_packages(),
     install_requires=[
+        'kornia',
         'lightning',
         'lmdb',
         'matplotlib',
         'pandas',
         'scikit-learn',
         'torch',
-        'torchvision'
+        'torchvision',
+        'wandb'
     ]
 )
