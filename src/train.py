@@ -49,6 +49,7 @@ parser.add_argument("--total_steps", type=int, default=3000)
 parser.add_argument("--latent_dim", type=int, default=64)
 parser.add_argument("--module", type=str, default='base')
 
+parser.add_argument("--wandb_id", type=str, required=True)
 parser.add_argument("--project", type=str, default="ops-training")
 parser.add_argument("-l", "--log_model", type=str, default='all')
 parser.add_argument("--subname", type=str, default="")
@@ -237,8 +238,9 @@ def train():
     run_id = wandb_logger.experiment.id
     run_name = wandb_logger.experiment.name
     loader_param = {"batch_size": 4200, "num_workers": data_param['loader_param']['num_workers']}
-    embed(run_id=run_id, run_name=run_name, loader_param=loader_param, module=args.module)
-    print('embedding computed')    
+    embed(save_dir=args.save_dir, wandb_id=args.wandb_id, run_id=run_id, run_name=run_name, loader_param=loader_param,
+          module=args.module)
+    print('embedding computed')
 
 if __name__ == '__main__':
     train()

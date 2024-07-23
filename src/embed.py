@@ -1,16 +1,17 @@
 from pathlib import Path
 from src.helper import get_module, embed_images
 import argparse
+import os
 import wandb
 from lightning.pytorch.loggers import WandbLogger
 
-def embed(run_id, run_name, version='best', loader_param=None, module='contrastive'):
+def embed(save_dir, wandb_id, run_id, run_name, version='best', loader_param=None, module='base'):
     '''
     wandb_logger: the wandb logger object
     loader_param: the parameters for the dataloader
     '''
     # save run id and run name to file
-    checkpoint_reference = f'wang-jerry/ops-training/model-{run_id}:{version}'
+    checkpoint_reference = f'{wandb_id}/ops-training/model-{run_id}:{version}'
     artifact_dir = WandbLogger.download_artifact(artifact=checkpoint_reference)
     print(checkpoint_reference)
 
@@ -23,9 +24,10 @@ def embed(run_id, run_name, version='best', loader_param=None, module='contrasti
     model = ModelClass.load_from_checkpoint(checkpt_path)
     dm = DataClass.load_from_checkpoint(checkpt_path)
 
+    dpath = os.path.join(save_dir, 'embedding')
+    os.makedirs(dpath, exist_ok=True)
     embedding_df = embed_images(model, dm, stage='embed', loader_param=loader_param, modelname=module)
-    embedding_df.to_pickle(f'/home/wangz222/scratch/embedding/{run_name}_{run_id}_{version}.pkl')
-
+    embedding_df.to_pickle(os.path.join(dpath, f'{run_name}_{run_id}_{version}.pkl'))
     wandb.finish() # end wandb run
 
 
@@ -36,7 +38,7 @@ if __name__ == "__main__":
     parser.add_argument("-v", "--version", type=str, default="best")
     parser.add_argument("--batch_size", type=int, default=4200, help="Batch size for the loader.")
     parser.add_argument("--num_workers", type=int, default=8, help="Number of workers for the loader.")
-    parser.add_argument("--module", type=str, default="contrastive", help="The module name.")
+    parser.add_argument("--module", type=str, default="base", help="The module name.")
     args = parser.parse_args()
 
     loader_param = {"batch_size": args.batch_size, "num_workers": args.num_workers}
