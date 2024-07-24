@@ -1,5 +1,5 @@
 from pathlib import Path
-from helper import get_module, embed_images
+from src.helper import get_module, embed_images
 import argparse
 import os
 import wandb
