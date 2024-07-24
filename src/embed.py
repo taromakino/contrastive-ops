@@ -1,5 +1,5 @@
 from pathlib import Path
-from src.helper import get_module, embed_images
+from helper import get_module, embed_images
 import argparse
 import os
 import wandb
@@ -33,6 +33,8 @@ def embed(save_dir, wandb_id, run_id, run_name, version='best', loader_param=Non
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Embedding script with run_id and run_name arguments.")
+    parser.add_argument("--save_dir", type=str, required=True)
+    parser.add_argument("--wandb_id", type=str, required=True)
     parser.add_argument("--run_id", type=str, help="The run ID.")
     parser.add_argument("--run_name", type=str, help="The run name.")
     parser.add_argument("-v", "--version", type=str, default="best")
@@ -42,4 +44,5 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     loader_param = {"batch_size": args.batch_size, "num_workers": args.num_workers}
-    embed(run_id=args.run_id, run_name=args.run_name, version=args.version, loader_param=loader_param, module=args.module)
+    embed(save_dir=args.save_dir, wandb_id=args.wandb_id, run_id=args.run_id, run_name=args.run_name,
+        version=args.version, loader_param=loader_param, module=args.module)
