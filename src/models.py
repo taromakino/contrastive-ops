@@ -530,18 +530,18 @@ class ContrastiveVAEmodel(BaseModel):
         # Multiply by the weighting factor
         return -tc_loss
 
-    def _get_loss(self, 
-             concat_tensors: Dict[str, Tuple[Dict[str, torch.Tensor], int]],
-             ):  
-        _, inference_outputs, generative_outputs = self.forward(**concat_tensors)            
+    def _get_loss(self, batch):
+        _, inference_outputs, generative_outputs = self.forward(batch)
 
+        x_c = batch['background']
+        x_t = batch['target']
         background_losses = self._generic_loss(
-            concat_tensors["c"],
+            x_c,
             inference_outputs["c"],
             generative_outputs["c"],
         )
         target_losses = self._generic_loss(
-            concat_tensors["t"],
+            x_t,
             inference_outputs["t"],
             generative_outputs["t"],
         )
