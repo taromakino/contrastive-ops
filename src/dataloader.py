@@ -125,7 +125,7 @@ class BaseDataModule(L.LightningDataModule):
     def on_after_batch_transfer(self, batch, dataloader_idx):
         # if self.trainer.training:
         return self.transform(batch)  # GPU/Batched data augmentation
-    
+
     @staticmethod
     def mix_df(df1, df2):
         '''insert df2 into df1 at random positions'''
@@ -157,7 +157,7 @@ class BaseDataModule(L.LightningDataModule):
         return new_dict
 
     @staticmethod
-    def get_filtered_df(dataset_path: Dict[str, str], 
+    def get_filtered_df(dataset_path: Dict[str, str],
                         plate_list, 
                         crop_size: float):
         # read in metadata, used for sampling cells
@@ -182,7 +182,7 @@ class BaseDataModule(L.LightningDataModule):
         # mitosis_metadata[Column.cell_cycle_stage.value] = 'mitotic'
         # df_all = pd.concat([interphase_metadata,mitosis_metadata])
         return df_all
-    
+
     @staticmethod
     def split_dataframe(df: Dict[str, pd.DataFrame], 
                         test_ratio: List[float],
@@ -241,7 +241,7 @@ class ContrastiveDataModule(BaseDataModule):
                                    drop_last=True, **self.loader_param)
     
     def test_dataloader(self):
-        return DataLoader(PairedDataset(self.test_background, self.test_target), collate_fn=self.collate_fn, 
+        return DataLoader(PairedDataset(self.test_background, self.test_target), collate_fn=self.collate_fn,
                                    drop_last=True, **self.loader_param)
     
     def all_dataloader(self, loader_param=None):
@@ -249,7 +249,7 @@ class ContrastiveDataModule(BaseDataModule):
             for key, val in loader_param.items():
                 self.loader_param[key] = val
         return DataLoader(self.ds_all, shuffle=False, drop_last=False, **self.loader_param)
-    
+
     @staticmethod
     def collate_fn(batch):
         batch_dict = {}
@@ -280,7 +280,7 @@ class DualDatasetGenerator:
                 yield DualDatasetGenerator.build_pair(next(self.iter))
             except StopIteration:
                 self.iter = iter(zip(self.background, self.target))
-    
+
     @staticmethod
     def build_pair(samples):
         bg_samples, tg_samples = samples

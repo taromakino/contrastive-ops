@@ -136,7 +136,7 @@ class PairedDataset(Dataset):
             
     def __len__(self):
         return self.length
-    
+
     @staticmethod
     def build_pair(bg_samples, tg_samples):
         if len(bg_samples) == 2:

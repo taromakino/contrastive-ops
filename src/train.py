@@ -18,25 +18,20 @@ from embed import embed
 from argparse import ArgumentParser
 
 parser = ArgumentParser()
-parser.add_argument("--model_name", type=str, default="vae")
+parser.add_argument("--model_name", type=str, default="ctvae")
 parser.add_argument("--optimizer", type=str, default="Adam")
 parser.add_argument("--lr", type=float, default=1e-3)
 parser.add_argument("--step_size", type=int, default=4500)
 parser.add_argument("--max_kl_weight", type=float, default=1)
-parser.add_argument("--ngene", type=int, default=5050)
-parser.add_argument("--n_unique_batch", type=int, default=34)
+parser.add_argument("--y_size", type=int, default=5050)
+parser.add_argument("--e_size", type=int, default=34)
+parser.add_argument("--z_size", type=int, default=32)
 parser.add_argument("-w2", "--wasserstein_penalty", type=float, default=8)
-parser.add_argument("-nz", "--n_z_latent", type=int, default=32)
-parser.add_argument("-ns", "--n_s_latent", type=int, default=32)
-parser.add_argument("--n_technical_latent", type=int, default=0)
-parser.add_argument("--batch_latent_dim", type=int, default=32)
 parser.add_argument("--BatchNorm", type=str, default=None)
 parser.add_argument("--base_channel_size", type=int, default=32)
 parser.add_argument("--model", type=str, default=None)
 parser.add_argument("--scale_factor", type=float, default=0.1)
 parser.add_argument("--disentangle", action='store_true')
-parser.add_argument("--adjust_prior_s", action='store_true', default=True)
-parser.add_argument("--adjust_prior_z", action='store_true', default=True)
 parser.add_argument("--classify_s", action='store_true')
 parser.add_argument("--classify_z", action='store_true')
 parser.add_argument("-cw", "--classification_weight", type=float, default=1)
@@ -46,8 +41,7 @@ parser.add_argument("--image_size", type=int, default=64)
 parser.add_argument("--reg_type", type=str, default=None)
 parser.add_argument("--klscheduler", type=str, default='cyclic')
 parser.add_argument("--total_steps", type=int, default=3000)
-parser.add_argument("--latent_dim", type=int, default=64)
-parser.add_argument("--module", type=str, default='base')
+parser.add_argument("--module", type=str, default='contrastive')
 
 parser.add_argument("--wandb_id", type=str, required=True)
 parser.add_argument("--project", type=str, default="ops-training")
@@ -65,6 +59,7 @@ parser.add_argument("--num_workers", type=int, default=8)
 parser.add_argument("--batch_correction", action='store_true')
 parser.add_argument("--label", type=str, nargs='*', default=[Column.gene.value, Column.batch.value])
 parser.add_argument("--stat_path", type=str)
+parser.add_argument("--dummy_x", action="store_true")
 
 parser.add_argument("--max_epochs", type=int, default=2)
 parser.add_argument("--gradient_clip_val", type=float, default=0.5)
@@ -85,20 +80,15 @@ model_param = {
                 "model_name": args.model_name,
                 "optimizer_param": {"optimizer": args.optimizer, "lr": args.lr},
                 "step_size": args.step_size,
-                "ngene": args.ngene,
-                "n_unique_batch": args.n_unique_batch,
+                "y_size": args.y_size,
+                "e_size": args.e_size,
+                "z_size": args.z_size,
                 "wasserstein_penalty": args.wasserstein_penalty,
-                "n_z_latent": args.n_z_latent,
-                "n_s_latent": args.n_s_latent,
-                "n_technical_latent": args.n_technical_latent,
-                "batch_latent_dim": args.batch_latent_dim,
                 "BatchNorm": args.BatchNorm,
                 "base_channel_size": args.base_channel_size,
                 "model": args.model,
                 "scale_factor": args.scale_factor,
                 "batch_size": args.batch_size,
-                "adjust_prior_s": args.adjust_prior_s,
-                "adjust_prior_z": args.adjust_prior_z,
                 "classify_s": args.classify_s,
                 "classify_z": args.classify_z,
                 "classification_weight": args.classification_weight,
@@ -109,7 +99,6 @@ model_param = {
                 "reg_type": args.reg_type,
                 "klscheduler": args.klscheduler,
                 "total_steps": args.total_steps,
-                "latent_dim": args.latent_dim,
                 }
 logger_p = {
                 "project": args.project,
@@ -128,7 +117,8 @@ data_param = {
                 "loader_param": {"batch_size": args.batch_size, "num_workers": args.num_workers},
                 "batch_correction": args.batch_correction,
                 "label": [Column.gene.value, Column.batch.value], #put batch at the end if using it
-                "stat_path": args.stat_path, #used for batch correction
+                "stat_path": args.stat_path, #used for batch correction,
+                "dummy_x": args.dummy_x
                 }
 train_param = {
                 "max_epochs": args.max_epochs,
