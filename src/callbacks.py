@@ -20,12 +20,7 @@ class ImagePredictionLogger(Callback):
                 val_imgs = self.val_imgs.to(pl_module.device)
             with torch.no_grad():
                 pl_module.eval()
-                if type(val_imgs) is dict:
-                    reconst_imgs = pl_module(**val_imgs)
-                elif isinstance(val_imgs, tuple) or isinstance(val_imgs, list):
-                    reconst_imgs = pl_module(*val_imgs)
-                else:
-                    reconst_imgs = pl_module(val_imgs)
+                reconst_imgs = pl_module(val_imgs)
                 if isinstance(reconst_imgs, tuple):
                     reconst_imgs = reconst_imgs[0]
                 if isinstance(val_imgs, tuple):
