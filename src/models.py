@@ -56,7 +56,7 @@ class Encoder(nn.Module):
         apply_scaled_init(self.fc_mu)
         apply_scaled_init(self.fc_log_var)
 
-    def forward(self, x, condition):
+    def forward(self, x, condition=None):
         x = self.net(x)
         mu = self.fc_mu(x)
         log_var = self.fc_log_var(x)
