@@ -22,7 +22,7 @@ class Encoder(nn.Module):
                  z_size: int,
                  num_input_channels: int,
                  base_channel_size: int,
-                 condition_size: 1,
+                 condition_size: int=1,
                  variational: bool=False,
                  label_latent_dim: int=0,
                  BatchNorm = None,
@@ -502,10 +502,9 @@ class ContrastiveVAEmodel(BaseModel):
             self.kl_weight_scheduler = KLRampScheduler(total_steps=self.total_steps, max_weight=max_kl_weight)
 
         # Background encoder
-        self.coder_param = {'num_input_channels': self.num_input_channels, "scale_factor": self.scale_factor, 
-                            'base_channel_size': self.base_channel_size, 'variational': True, 'width': self.width, 
-                            'height':self.height, 'BatchNorm': self.BatchNorm, 'n_unique_batch': self.n_unique_batch, 
-                            'model': self.model,}
+        self.coder_param = {'num_input_channels': self.num_input_channels, "scale_factor": self.scale_factor,
+                            'base_channel_size': self.base_channel_size, 'variational': True, 'width': self.width,
+                            'height':self.height, 'BatchNorm': self.BatchNorm, 'model': self.model}
         self.qy = Encoder(
             z_size=self.z_size,
             **self.coder_param
