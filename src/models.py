@@ -475,10 +475,10 @@ class ContrastiveVAEmodel(BaseModel):
         x_pred = generative_out["x_pred"]
 
         recon_loss = VAEmodel.reconstruction_loss(x, x_pred, self.logsd)
-        kl_y = VAEmodel.latent_kl_divergence(mu_qy, sd_qy, prior_mean=mu_py)
-        kl_x = VAEmodel.latent_kl_divergence(mu_qx, sd_qx, prior_mean=mu_px)
-        kl_e = VAEmodel.latent_kl_divergence(mu_qe, sd_qe, prior_mean=mu_pe)
-        return dict(recon_loss=recon_loss, kl_y=kl_y, kl_x=kl_x, kl_e=kl_e)
+        kl_zy = VAEmodel.latent_kl_divergence(mu_qy, sd_qy, prior_mean=mu_py)
+        kl_zx = VAEmodel.latent_kl_divergence(mu_qx, sd_qx, prior_mean=mu_px)
+        kl_ze = VAEmodel.latent_kl_divergence(mu_qe, sd_qe, prior_mean=mu_pe)
+        return dict(recon_loss=recon_loss, kl_zy=kl_zy, kl_zx=kl_zx, kl_ze=kl_ze)
     
     def compute_independent_loss(self, zb, zc):
         reg_type = self.reg_type
@@ -546,8 +546,9 @@ class ContrastiveVAEmodel(BaseModel):
             generative_outputs["t"],
         )
         recon_loss = background_losses["recon_loss"] + target_losses["recon_loss"]
-        kl_divergence_z = background_losses["kl_z"] + target_losses["kl_z"]
-        kl_divergence_s = target_losses["kl_s"]
+        kl_divergence_zy = target_losses["kl_zy"]
+        kl_divergence_zx = background_losses["kl_zx"] + target_losses["kl_zx"]
+        kl_divergence_ze = background_losses["kl_ze"] + target_losses["kl_ze"]
 
         wasserstein_loss = (
             torch.norm(inference_outputs["c"]["mu_qx"], dim=-1)**2
@@ -564,13 +565,14 @@ class ContrastiveVAEmodel(BaseModel):
         kl_term_weight = self.kl_weight_scheduler.step()
         
         elbo = torch.mean(recon_loss + 
-                          kl_term_weight * (kl_divergence_s + kl_divergence_z + 
+                          kl_term_weight * (kl_divergence_zy + kl_divergence_zx + kl_divergence_ze +
                                             self.wasserstein_penalty * wasserstein_loss +
                                             self.tc_penalty * tc_loss))
 
         self.log_dict({
-            'kl_divergence_z': kl_divergence_z.mean().detach(),
-            'kl_divergence_s': kl_divergence_s.mean().detach(),
+            'kl_divergence_zy': kl_divergence_zy.mean().detach(),
+            'kl_divergence_zx': kl_divergence_zx.mean().detach(),
+            'kl_divergence_ze': kl_divergence_ze.mean().detach(),
             'total_recon_loss': recon_loss.mean().detach(),
             'wasserstein_loss': wasserstein_loss.mean().detach(),
             'tc_loss': tc_loss.mean().detach(),
