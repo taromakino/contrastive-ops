@@ -419,7 +419,7 @@ class ContrastiveVAEmodel(BaseModel):
                     out_c_elem, out_t_elem = None, None
                 out_c[key] = out_c_elem
                 out_t[key] = out_t_elem
-            out_c["s"] = torch.zeros_like(out_c["s"])
+            out_c["zy"] = torch.zeros_like(out_c["zy"])
             return dict(c=out_c, t=out_t)
 
     def _generic_generative(self,
