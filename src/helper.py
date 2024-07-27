@@ -74,7 +74,6 @@ def get_images(num, dataloader, transform):
 def get_module(key, module_name):
     modules = dict(
         model={
-            'ae': AEmodel,
             'vae': VAEmodel,
             'ctvae': ContrastiveVAEmodel,
             },

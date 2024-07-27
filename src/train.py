@@ -27,19 +27,14 @@ parser.add_argument("--y_size", type=int, default=5050)
 parser.add_argument("--e_size", type=int, default=34)
 parser.add_argument("--z_size", type=int, default=32)
 parser.add_argument("-w2", "--wasserstein_penalty", type=float, default=8)
-parser.add_argument("--BatchNorm", type=str, default=None)
 parser.add_argument("--base_channel_size", type=int, default=32)
-parser.add_argument("--model", type=str, default=None)
 parser.add_argument("--scale_factor", type=float, default=0.1)
 parser.add_argument("--disentangle", action='store_true')
-parser.add_argument("--classify_s", action='store_true')
-parser.add_argument("--classify_z", action='store_true')
 parser.add_argument("-cw", "--classification_weight", type=float, default=1)
 parser.add_argument("--tc_penalty", type=float, default=1)
 parser.add_argument("--center_crop", action='store_true')
 parser.add_argument("--image_size", type=int, default=64)
 parser.add_argument("--reg_type", type=str, default=None)
-parser.add_argument("--klscheduler", type=str, default='cyclic')
 parser.add_argument("--total_steps", type=int, default=3000)
 parser.add_argument("--module", type=str, default='contrastive')
 
@@ -84,9 +79,7 @@ model_param = {
                 "e_size": args.e_size,
                 "z_size": args.z_size,
                 "wasserstein_penalty": args.wasserstein_penalty,
-                "BatchNorm": args.BatchNorm,
                 "base_channel_size": args.base_channel_size,
-                "model": args.model,
                 "scale_factor": args.scale_factor,
                 "batch_size": args.batch_size,
                 "classify_s": args.classify_s,
@@ -97,7 +90,6 @@ model_param = {
                 "image_size": args.image_size,
                 "max_kl_weight": args.max_kl_weight,
                 "reg_type": args.reg_type,
-                "klscheduler": args.klscheduler,
                 "total_steps": args.total_steps,
                 }
 logger_p = {
