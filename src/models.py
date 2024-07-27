@@ -315,39 +315,18 @@ class ContrastiveVAEmodel(BaseModel):
         self.total_steps = total_steps
         self.kl_weight_scheduler = CyclicWeightScheduler(step_size=self.step_size, max_weight=max_kl_weight)
 
-        # Background encoder
-        self.coder_param = {'num_input_channels': self.num_input_channels, "scale_factor": self.scale_factor,
-                            'base_channel_size': self.base_channel_size, 'variational': True, 'width': self.width,
-                            'height':self.height, 'BatchNorm': self.BatchNorm, 'model': self.model}
-        self.qy = Encoder(
-            z_size=self.z_size,
-            **self.coder_param
-        )
-        # Salient encoder 
-        self.qx = Encoder(
-            z_size=self.z_size,
-            **self.coder_param
-        )
-        self.qe = Encoder(
-            z_size=self.z_size,
-            condition_size=self.e_size,
-            **self.coder_param
-        )
+        self.qy = Encoder(self.z_size, self.num_input_channels, self.base_channel_size)
+        self.qx = Encoder(self.z_size, self.num_input_channels, self.base_channel_size)
+        self.qe = Encoder(self.z_size, self.num_input_channels, self.base_channel_size, self.e_size)
 
-        # Decoder from latent variable to distribution parameters in data space.
-        self.decoder = Decoder(
-            z_size=self.z_size,
-            **self.coder_param
-        )
+        self.decoder = Decoder(self.z_size, self.num_input_channels, self.base_channel_size)
         
         self.mu_py = nn.Embedding(self.y_size, self.z_size)
         self.mu_px = nn.Embedding(self.y_size, self.z_size)
         self.mu_pe = nn.Embedding(self.e_size, self.z_size)
-    
-        # for the gaussian likelihood
+
         self.logsd = nn.Parameter(torch.Tensor([0.0]))
 
-        # Saving hyperparameters of autoencoder
         self.save_hyperparameters()
 
     def forward(self, batch):
@@ -603,7 +582,7 @@ class ContrastiveVAEmodel(BaseModel):
     
  
 class CyclicWeightScheduler:
-    def __init__(self, step_size, base_weight=0, max_weight=1):
+    def __init__(self, step_size, base_weight=0., max_weight=1.):
         self.base_weight = base_weight
         self.max_weight = max_weight
         self.step_size = step_size
