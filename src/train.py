@@ -29,7 +29,6 @@ parser.add_argument("--z_size", type=int, default=32)
 parser.add_argument("-w2", "--wasserstein_penalty", type=float, default=8)
 parser.add_argument("--base_channel_size", type=int, default=32)
 parser.add_argument("--scale_factor", type=float, default=0.1)
-parser.add_argument("--disentangle", action='store_true')
 parser.add_argument("-cw", "--classification_weight", type=float, default=1)
 parser.add_argument("--tc_penalty", type=float, default=1)
 parser.add_argument("--center_crop", action='store_true')
@@ -82,11 +81,8 @@ model_param = {
                 "base_channel_size": args.base_channel_size,
                 "scale_factor": args.scale_factor,
                 "batch_size": args.batch_size,
-                "classify_s": args.classify_s,
-                "classify_z": args.classify_z,
                 "classification_weight": args.classification_weight,
                 "tc_penalty": args.tc_penalty,
-                "disentangle": args.disentangle,
                 "image_size": args.image_size,
                 "max_kl_weight": args.max_kl_weight,
                 "reg_type": args.reg_type,

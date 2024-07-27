@@ -120,7 +120,9 @@ class BaseModel(L.LightningModule):
         latent_dim: int=32,
         base_channel_size: int=32,
         num_input_channels: int = 4,
-        image_size: int = 64):
+        image_size: int = 64,
+        *args,
+        **kwargs):
         super().__init__()
         
         self.model_name = model_name
