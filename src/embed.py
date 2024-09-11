@@ -5,7 +5,7 @@ import os
 import wandb
 from lightning.pytorch.loggers import WandbLogger
 
-def embed(save_dir, wandb_id, run_id, run_name, version='best', loader_param=None, module='base'):
+def embed(save_dir, wandb_id, run_id, run_name, version='best', loader_param=None, module='contrastive'):
     '''
     wandb_logger: the wandb logger object
     loader_param: the parameters for the dataloader

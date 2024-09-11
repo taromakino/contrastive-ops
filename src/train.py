@@ -18,7 +18,7 @@ from embed import embed
 from argparse import ArgumentParser
 
 parser = ArgumentParser()
-parser.add_argument("--model_name", type=str, default="vae")
+parser.add_argument("--model_name", type=str, default="ctvae")
 parser.add_argument("--optimizer", type=str, default="Adam")
 parser.add_argument("--lr", type=float, default=1e-3)
 parser.add_argument("--step_size", type=int, default=4500)
@@ -47,7 +47,7 @@ parser.add_argument("--reg_type", type=str, default=None)
 parser.add_argument("--klscheduler", type=str, default='cyclic')
 parser.add_argument("--total_steps", type=int, default=3000)
 parser.add_argument("--latent_dim", type=int, default=64)
-parser.add_argument("--module", type=str, default='base')
+parser.add_argument("--module", type=str, default='contrastive')
 
 parser.add_argument("--wandb_id", type=str, required=True)
 parser.add_argument("--project", type=str, default="ops-training")
