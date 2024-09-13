@@ -40,7 +40,7 @@ if __name__ == "__main__":
     parser.add_argument("-v", "--version", type=str, default="best")
     parser.add_argument("--batch_size", type=int, default=4200, help="Batch size for the loader.")
     parser.add_argument("--num_workers", type=int, default=8, help="Number of workers for the loader.")
-    parser.add_argument("--module", type=str, default="base", help="The module name.")
+    parser.add_argument("--module", type=str, default="contrastive", help="The module name.")
     args = parser.parse_args()
 
     loader_param = {"batch_size": args.batch_size, "num_workers": args.num_workers}
