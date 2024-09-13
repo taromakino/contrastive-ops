@@ -6,6 +6,9 @@ from src.transformation import DataAugmentation, ContrastiveDataAugmentation
 from tqdm import tqdm
 
 
+MERGE_COLS = ["sgRNA_0", "gene_symbol_0", "plate", "well", "tile", "cell_i", "cell_j"]
+
+
 def embed_images(model, data_module, stage='embed', loader_param=None, modelname='contrastive'):
     # Encode all images in the data_loader using model, and return encodings
     data_module.prepare_data()
@@ -32,8 +35,7 @@ def embed_images(model, data_module, stage='embed', loader_param=None, modelname
     pbar.close()
     embedding = torch.cat(embed_list, dim=0)
     embedding_df = pd.DataFrame(embedding.cpu().numpy())
-    embedding_df = pd.concat([data_module.ds_all.df[[Column.sgRNA.value,Column.gene.value]]
-                            .reset_index(drop=True), embedding_df], axis=1)
+    embedding_df = pd.concat([data_module.ds_all.df[MERGE_COLS].reset_index(drop=True), embedding_df], axis=1)
     return embedding_df
 
 def display_patch(image):
