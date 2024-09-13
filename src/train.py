@@ -18,6 +18,7 @@ from embed import embed
 from argparse import ArgumentParser
 
 parser = ArgumentParser()
+parser.add_argument("--seed", type=int, default=0)
 parser.add_argument("--model_name", type=str, default="ctvae")
 parser.add_argument("--optimizer", type=str, default="Adam")
 parser.add_argument("--lr", type=float, default=1e-3)
@@ -154,6 +155,7 @@ pprint(train_param)
 pprint(earlystop)
 
 def train():
+    L.seed_everything(args.seed)
     # set_seed(42)
 
     # use the appropriate classes
